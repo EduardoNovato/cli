@@ -1,0 +1,6 @@
+safety:
+  confirm_deletion: true       # Requerir confirmación interactiva
+  protected_repos:            # Repositorios que no se pueden eliminar
+    - "production"
+    - "main"
+  allow_local_deletion: false 

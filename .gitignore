@@ -11,8 +11,6 @@
 *.dll
 *.so
 *.dylib
-gitflow
-
 # Test binary, built with `go test -c`
 *.test
 
