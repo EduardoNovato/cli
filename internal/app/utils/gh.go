@@ -170,3 +170,24 @@ func ConfirmDelete(repoName string) bool {
 	survey.AskOne(prompt, &confirm)
 	return confirm
 }
+
+// RepoClone clona un repositorio de GitHub
+func RepoClone(repoURL string) error {
+	cmd := exec.Command("gh", "repo", "clone", repoURL)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+// AskRepoURL solicita al usuario la URL del repositorio a clonar
+func AskRepoURL() (string, error) {
+	var repoURL string
+	prompt := &survey.Input{
+		Message: "Introduce la URL del repositorio a clonar:",
+	}
+	err := survey.AskOne(prompt, &repoURL, survey.WithValidator(survey.Required))
+	if err != nil {
+		return "", fmt.Errorf("error al solicitar URL del repositorio: %v", err)
+	}
+	return repoURL, nil
+}

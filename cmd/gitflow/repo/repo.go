@@ -18,5 +18,6 @@ func init() {
 
 	repoCmd.AddCommand(CreateRepoCmd)
 	repoCmd.AddCommand(DeleteCmd)
+	repoCmd.AddCommand(CloneRepoCmd)
 	RootCmd.AddCommand(repoCmd)
 }

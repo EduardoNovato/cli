@@ -42,15 +42,6 @@ func DeleteRepoFlow() {
 		return
 	}
 
-	// Validación de repositorios protegidos
-	protected := []string{"production", "main"} // Se puede cargar dinámicamente de configs/default.yaml
-	for _, p := range protected {
-		if strings.EqualFold(repo, p) {
-			fmt.Printf("No se puede eliminar el repositorio protegido: '%s'\n", repo)
-			return
-		}
-	}
-
 	confirm := utils.Confirm(fmt.Sprintf("¿Estás seguro de eliminar '%s'?", repo), false)
 	if !confirm {
 		fmt.Println("Operación cancelada")
@@ -64,4 +55,22 @@ func DeleteRepoFlow() {
 	}
 
 	fmt.Printf("Repositorio '%s' eliminado exitosamente.\n", repo)
+}
+
+func CloneRepoFlow() {
+	fmt.Println("Clonando repositorio")
+
+	repo := utils.Input("URL del repositorio a clonar:")
+	if repo == "" {
+		fmt.Println("La URL del repositorio no puede estar vacía.")
+		return
+	}
+
+	err := utils.RepoClone(repo)
+	if err != nil {
+		fmt.Printf("Error al clonar el repositorio: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Repositorio '%s' clonado exitosamente.\n", repo)
 }
