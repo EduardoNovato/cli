@@ -114,15 +114,6 @@ func AuthLogin() error {
 	return cmd.Run()
 }
 
-func checkDeletePermissions() error {
-	cmd := exec.Command("gh", "auth", "refresh", "-h", "github.com", "-s", "delete_repo")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("error al verificar permisos: %v\n%s", err, string(output))
-	}
-	return nil
-}
-
 func ConfirmDelete(repoName string) bool {
 	var confirm bool
 	prompt := &survey.Confirm{
@@ -193,4 +184,22 @@ func RepoList(owner string, limit int, visibility string, isFork, isSource bool,
 		return fmt.Errorf("error al listar repositorios: %v", err)
 	}
 	return nil
+}
+
+func RepoArchive(name string) (err error) {
+	cmd := exec.Command("gh", "repo", "archive", name, "--yes")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+func ConfirmRepoArchive(repoName string) bool {
+	var confirm bool
+	prompt := &survey.Confirm{
+		Message: fmt.Sprintf("¿Estás seguro de archivar '%s'?", repoName),
+		Default: false,
+	}
+	survey.AskOne(prompt, &confirm)
+	return confirm
 }

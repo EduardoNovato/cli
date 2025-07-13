@@ -30,7 +30,7 @@ func CreateRepoFlow() {
 		return
 	}
 
-	fmt.Printf("Repositorio '%s' creado exitosamente!\n", name)
+	fmt.Printf("Repositorio creado exitosamente: https://github.com/%s/%s\n", utils.GetCurrentUser(), name)
 }
 
 func DeleteRepoFlow() {
@@ -107,6 +107,23 @@ func ListReposFlow() {
 	}
 
 	err := utils.RepoList(owner, limit, vis, isFork, isSource, lang)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+}
+
+func ArchiveRepoFlow() {
+	fmt.Printf("Archivando repositorio")
+
+	repo := utils.Input("Nombre del repositorio que desea arhivar:")
+
+	if repo == "" {
+		fmt.Println("El nombre del repositorio no puede estar vacío.")
+		return
+	}
+
+	err := utils.RepoArchive(repo)
+
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}

@@ -23,6 +23,8 @@ var RootCmd = &cobra.Command{
 				workflows.ListReposFlow()
 			case "Crear Repositorio":
 				workflows.CreateRepoFlow()
+			case "Archivar Repositorio":
+				workflows.ArchiveRepoFlow()
 			case "Eliminar Repositorio":
 				workflows.DeleteRepoFlow()
 			case "Salir":
@@ -38,9 +40,10 @@ func selectMainAction() string {
 	prompt := &survey.Select{
 		Message: "¿Qué deseas hacer?",
 		Options: []string{
-			"Clonaer Repositorio",
+			"Clonar Repositorio",
 			"Lista Repositorios",
 			"Crear Repositorio",
+			"Archivar Repositorio",
 			"Eliminar Repositorio",
 			"Salir",
 		},

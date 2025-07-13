@@ -19,7 +19,8 @@ func init() {
 	repoCmd.AddCommand(CreateRepoCmd)
 	repoCmd.AddCommand(DeleteCmd)
 	repoCmd.AddCommand(CloneRepoCmd)
-	repoCmd.AddCommand(ListCmd) // 👈 Aquí agregas el comando list
+	repoCmd.AddCommand(ListCmd)
+	repoCmd.AddCommand(ArchiveRepoCmd)
 
 	RootCmd.AddCommand(repoCmd)
 }
