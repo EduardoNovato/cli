@@ -59,44 +59,6 @@ func AskRepoDetails() (name string, visibility string, initReadme bool, err erro
 	return answers.Name, visMap[answers.Visibility], answers.InitReadme, err
 }
 
-// // RepoDelete elimina un repositorio en GitHub
-// func RepoDelete(name string, skipConfirmation bool) error {
-
-// 	err := checkDeletePermissions()
-// 	if err != nil {
-// 		return fmt.Errorf("no tienes permisos para eliminar repositorios. Por favor, revisa tus permisos de autenticación: %v", err)
-// 	}
-
-// 	arg := []string{"repo", "delete"}
-
-// 	if name != "" {
-// 		arg = append(arg, name)
-// 	}
-
-// 	if skipConfirmation {
-// 		arg = append(arg, "--yes")
-// 	}
-
-// 	cmd := exec.Command("gh", arg...)
-// 	output, err := cmd.CombinedOutput()
-// 	outputStr := string(output)
-
-// 	if err != nil {
-// 		// Manejo específico de errores conocidos
-// 		if strings.Contains(outputStr, "delete_repo") {
-// 			return fmt.Errorf(`permisos insuficientes. Necesitas el scope 'delete_repo'.
-// 				Solución:
-// 				1. Ejecuta: gh auth refresh -h github.com -s delete_repo
-// 				2. Vuelve a intentar la operación`)
-// 		}
-
-// 		return fmt.Errorf("error al eliminar repositorio: %v\n%s", err, outputStr)
-// 	}
-// 	return nil
-// }
-
-// GetCurrentUser obtiene el usuario autenticado
-
 // RepoDelete elimina un repositorio de GitHub
 func RepoDelete(name string) error {
 	args := []string{"repo", "delete", name, "--yes"}
@@ -190,4 +152,45 @@ func AskRepoURL() (string, error) {
 		return "", fmt.Errorf("error al solicitar URL del repositorio: %v", err)
 	}
 	return repoURL, nil
+}
+
+// RepoList lista repositorios de un usuario u organización usando `gh repo list`
+func RepoList(owner string, limit int, visibility string, isFork, isSource bool, language string) error {
+	args := []string{"repo", "list"}
+
+	// Owner (usuario u organización)
+	if owner != "" {
+		args = append(args, owner)
+	}
+
+	// Filtros de flags
+	if limit > 0 {
+		args = append(args, "--limit", fmt.Sprintf("%d", limit))
+	}
+	if visibility != "" {
+		args = append(args, "--visibility", visibility) // public | private | internal
+	}
+	if isFork {
+		args = append(args, "--fork")
+	}
+	if isSource {
+		args = append(args, "--source")
+	}
+	if language != "" {
+		args = append(args, "--language", language)
+	}
+
+	// Campos JSON válidos y JQ expression robusta
+	args = append(args,
+		"--json", "name,isPrivate,isFork,primaryLanguage,url",
+		"--jq", `.[] | "\(.name) - \((if .isPrivate then "private" else "public" end)) - \((.primaryLanguage.name // "")) - \(.url)"`,
+	)
+
+	cmd := exec.Command("gh", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error al listar repositorios: %v", err)
+	}
+	return nil
 }

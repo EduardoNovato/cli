@@ -74,3 +74,40 @@ func CloneRepoFlow() {
 
 	fmt.Printf("Repositorio '%s' clonado exitosamente.\n", repo)
 }
+
+func ListReposFlow() {
+	fmt.Println("Listado de repositorios")
+
+	defaultOwner := utils.GetCurrentUser()
+	owner := utils.Input(fmt.Sprintf("Usuario u organización [%s]:", defaultOwner))
+	if owner == "" {
+		owner = defaultOwner
+	}
+
+	visibility := utils.Select("Filtrar por visibilidad:", []string{"Todos", "Público", "Privado", "Interno"})
+	visMap := map[string]string{"Todos": "", "Público": "public", "Privado": "private", "Interno": "internal"}
+	vis := visMap[visibility]
+
+	filterType := utils.Select("¿Qué tipo de repos mostrar?", []string{"Todos", "Solo forks", "Solo originales"})
+	isFork := false
+	isSource := false
+	if filterType == "Solo forks" {
+		isFork = true
+	}
+	if filterType == "Solo originales" {
+		isSource = true
+	}
+
+	lang := utils.Input("Filtrar por lenguaje (deja vacío para todos):")
+
+	limitStr := utils.Input("¿Cuántos repositorios deseas mostrar? (por defecto 30):")
+	limit := 30
+	if strings.TrimSpace(limitStr) != "" {
+		fmt.Sscanf(limitStr, "%d", &limit)
+	}
+
+	err := utils.RepoList(owner, limit, vis, isFork, isSource, lang)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+}
