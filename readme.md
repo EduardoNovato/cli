@@ -41,6 +41,8 @@ You will see:
 > Create Repository
   Delete Repository
   Exit
+  Clone Repository
+  List Repositories
 ```
 
 #### Create Repository
@@ -52,25 +54,20 @@ If you select **Create Repository**, you will be prompted for:
 
 #### Delete Repository
 
+
 If you select **Delete Repository**, you will be prompted for:
 - **Repository name**
 - **Confirmation** before deletion
 
-> **Warning:** You cannot delete protected repositories such as `production` or `main` (see `configs/default.yaml`).
+#### Clone Repository
 
-### Direct Commands
+If you select **Clone Repository**, you will be prompted for:
+- **Repository name** (to clone from your account)
 
-Create a repository directly:
+#### List Repositories
 
-```sh
-./gitflow repo
-```
+If you select **List Repositories**, you will see a list of your repositories on GitHub.
 
-Delete a repository directly:
-
-```sh
-./gitflow delete <repo-name>
-```
 
 If you are not authenticated, the tool will guide you through the GitHub authentication process.
 
