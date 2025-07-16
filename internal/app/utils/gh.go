@@ -107,11 +107,25 @@ func IsAuthenticated() bool {
 
 // AuthLogin inicia el flujo de autenticación
 func AuthLogin() error {
-	cmd := exec.Command("gh", "auth", "login", "--web")
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	if IsAuthenticated() {
+		return nil
+	}
+	var confirm bool
+	prompt := &survey.Confirm{
+		Message: "No has iniciado sesión en GitHub. ¿Deseas ejecutar el comando para loguearte?",
+		Default: true,
+	}
+	survey.AskOne(prompt, &confirm)
+	if confirm {
+		cmd := exec.Command("gh", "auth", "login", "--web")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		return cmd.Run()
+	} else {
+		fmt.Println("Recuerde que debe usar el comando 'gh auth login' para iniciar sesión en GitHub.")
+		return fmt.Errorf("no autenticado en GitHub")
+	}
 }
 
 func ConfirmDelete(repoName string) bool {

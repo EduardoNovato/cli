@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/EduardoNovato/gitflow/internal/app/utils"
 	"github.com/EduardoNovato/gitflow/internal/app/workflows"
 	"github.com/spf13/cobra"
 )
@@ -13,9 +14,13 @@ var RootCmd = &cobra.Command{
 	Use:   "gitflow",
 	Short: "Interfaz interactiva para GitHub",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Validación global de autenticación
+		if err := utils.AuthLogin(); err != nil {
+			fmt.Println("No se puede continuar sin autenticación en GitHub.")
+			os.Exit(1)
+		}
 		for {
 			action := selectMainAction()
-
 			switch action {
 			case "Clonaer Repositorio":
 				workflows.CloneRepoFlow()
